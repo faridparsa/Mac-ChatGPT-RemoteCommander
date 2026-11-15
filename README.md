@@ -40,6 +40,20 @@
 
 ---
 
+## 📥 Download
+
+Pre-built standalone application for macOS 14+ (Apple Silicon):
+
+- **[⬇️ Download RemoteCommander.zip (Latest)](https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander/raw/main/RemoteCommander.zip)** *(Direct 1-click download, ~20 MB)*
+- You can also clone this repository directly; the pre-compiled **`RemoteCommander.app`** bundle is included right in the project root!
+
+> **Installation**:
+> 1. Download and unzip `RemoteCommander.zip` (or use the pre-built `RemoteCommander.app` in the cloned repo).
+> 2. Drag **RemoteCommander.app** into your `/Applications` folder.
+> 3. Double-click to launch!
+
+---
+
 ## ✨ Features
 
 - 🛡️ **Interactive Command Approval (Human-in-the-Loop)**:
