@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Resources/AppIcon.png" width="128" height="128" alt="RemoteCommander App Icon">
+</p>
+
 # RemoteCommander 🚀
 ### Native macOS Desktop Bridge for ChatGPT Browser Control
 

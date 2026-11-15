@@ -10,7 +10,22 @@ public class AppCoordinator: ObservableObject {
     private var server: HTTPServer?
     
     public init() {
+        setupAppIcon()
         start()
+    }
+    
+    private func setupAppIcon() {
+        let candidates = [
+            Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
+            Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/AppIcon.icns"),
+            URL(fileURLWithPath: "Resources/AppIcon.icns")
+        ]
+        for url in candidates.compactMap({ $0 }) {
+            if let img = NSImage(contentsOf: url) {
+                NSApplication.shared.applicationIconImage = img
+                break
+            }
+        }
     }
     
     public func start() {

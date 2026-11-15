@@ -13,6 +13,7 @@ mkdir -p RemoteCommander.app/Contents/Resources
 
 cp .build/release/RemoteCommander RemoteCommander.app/Contents/MacOS/
 
+# Bundle Cloudflare Tunnel binary
 if [ ! -f bin/cloudflared ]; then
     echo "⬇️ Downloading standalone cloudflared binary..."
     mkdir -p bin
@@ -22,6 +23,11 @@ fi
 
 cp bin/cloudflared RemoteCommander.app/Contents/Resources/
 chmod +x RemoteCommander.app/Contents/Resources/cloudflared
+
+# Bundle App Icon
+if [ -f Resources/AppIcon.icns ]; then
+    cp Resources/AppIcon.icns RemoteCommander.app/Contents/Resources/
+fi
 
 cat << 'EOF' > RemoteCommander.app/Contents/Info.plist
 <?xml version="1.0" encoding="UTF-8"?>
@@ -42,6 +48,8 @@ cat << 'EOF' > RemoteCommander.app/Contents/Info.plist
     <string>APPL</string>
     <key>CFBundleExecutable</key>
     <string>RemoteCommander</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>NSHighResolutionCapable</key>
@@ -57,5 +65,8 @@ cat << 'EOF' > RemoteCommander.app/Contents/Info.plist
 </plist>
 EOF
 
-echo "✅ Build complete! You can open the app with:"
+# Touch app bundle so macOS LaunchServices refreshes icon cache
+touch RemoteCommander.app
+
+echo "✅ Build complete with AppIcon! You can open the app with:"
 echo "   open RemoteCommander.app"
