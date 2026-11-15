@@ -40,10 +40,10 @@ public class TunnelManager: ObservableObject {
             }
         }
         
-        // 2. Local bin directory in workspace
+        // 2. Local bin directory in workspace or user directory
         let candidatePaths = [
-            "/Volumes/es/remoteTerminal/bin/cloudflared",
             FileManager.default.currentDirectoryPath + "/bin/cloudflared",
+            Bundle.main.bundlePath + "/Contents/Resources/cloudflared",
             NSString(string: "~/.remotecommander/bin/cloudflared").expandingTildeInPath,
             "/opt/homebrew/bin/cloudflared",
             "/usr/local/bin/cloudflared"

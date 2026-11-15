@@ -1,111 +1,177 @@
 # RemoteCommander 🚀
-### Apple Native macOS App for ChatGPT Browser Control
+### Native macOS Desktop Bridge for ChatGPT Browser Control
 
-**RemoteCommander** is a native Apple macOS application (SwiftUI / AppKit) that lets you execute terminal commands and manage your Mac directly from **ChatGPT in your web browser**—with a standard macOS windowed interface and **human-in-the-loop interactive approval prompts**.
+[![Platform](https://img.shields.io/badge/Platform-macOS%2014.0%2B-black?style=flat&logo=apple)](https://www.apple.com/macos/)
+[![Language](https://img.shields.io/badge/Swift-6.0-orange?style=flat&logo=swift)](https://swift.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**RemoteCommander** is an Apple native macOS application (SwiftUI / AppKit) that enables **ChatGPT running in your web browser** to execute terminal commands on your Mac. It features a desktop interface with **human-in-the-loop interactive approval prompts**, real-time terminal streaming, an execution history audit log, and zero-configuration HTTPS tunneling.
+
+```
+       ┌────────────────────────┐
+       │   ChatGPT in Browser   │
+       │     (chatgpt.com)      │
+       └───────────┬────────────┘
+                   │ Tool Call / Action (HTTPS + Bearer Token)
+                   ▼
+       ┌────────────────────────┐
+       │ Cloudflare Quick Tunnel│
+       │   (trycloudflare.com)  │
+       └───────────┬────────────┘
+                   │ Encrypted Local Tunnel
+                   ▼
+┌────────────────────────────────────────────────────────┐
+│             RemoteCommander macOS Native App           │
+│                                                        │
+│  ┌───────────────────────┐   ┌──────────────────────┐  │
+│  │ Local HTTP/MCP Server │──▶│ Approval Prompt (UI) │  │
+│  └───────────────────────┘   └──────────┬───────────┘  │
+│                                         │ Approved?    │
+│                                         ▼              │
+│  ┌───────────────────────┐   ┌──────────────────────┐  │
+│  │  Live Terminal View   │◀──│ Shell Runner (zsh)   │  │
+│  └───────────────────────┘   └──────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-1. **Interactive Approval Prompts (Human-in-the-Loop)**:
-   - Whenever ChatGPT requests to run a shell command, the app displays a review card showing the exact command, working directory, and risk classification.
-   - **Risk Assessment**:
-     - 🟢 **Safe**: Read-only operations (`ls`, `cat`, `pwd`, `git status`, `sw_vers`, `date`)
-     - 🟡 **Moderate**: File creations and build tools (`mkdir`, `touch`, `cp`, `git commit`, `npm`, `swift`)
-     - 🔴 **High Risk**: Potentially destructive commands (`rm -rf`, `sudo`, `dd`, `kill -9`, piping to bash)
-   - Click **[ Approve & Run ]** to execute or **[ Reject ]** to abort and notify ChatGPT.
+- 🛡️ **Interactive Command Approval (Human-in-the-Loop)**:
+  - Every command requested by ChatGPT is paused and queued for your confirmation.
+  - The app presents a review card with the exact command, working directory, and risk classification:
+    - 🟢 **Safe**: Read-only inspection (`ls`, `cat`, `pwd`, `git status`, `sw_vers`, `date`)
+    - 🟡 **Moderate**: File modifications and builds (`mkdir`, `touch`, `cp`, `git commit`, `npm`, `swift`)
+    - 🔴 **High Risk**: Destructive commands (`rm -rf`, `sudo`, `dd`, `kill -9`, piping to bash)
+  - Choose **[ Approve & Run ]** or **[ Reject ]** with one click or keyboard shortcut.
 
-2. **Native Windowed macOS Interface (SwiftUI)**:
-   - **Approvals Tab**: Live queue of pending requests with detailed parameters and action buttons.
-   - **Terminal Console**: Dark monospace console with real-time stdout/stderr streaming, auto-scroll, clear, and copy.
-   - **Execution History**: Searchable audit log of all commands with duration, exit code, and stdout/stderr inspectors.
-   - **ChatGPT Setup**: Status card showing your live Cloudflare Tunnel URL, API token, and a 1-click copyable OpenAPI schema.
-   - **Settings & Security**: Configurable default working directory, shell selection (`/bin/zsh`, `/bin/bash`), timeouts, and optional auto-approval for safe commands.
+- 🖥️ **Native Windowed macOS Interface (SwiftUI)**:
+  - **Approvals Tab**: Live review queue with risk tags, working directory details, and approval actions.
+  - **Terminal Console**: Dark monospace terminal with real-time streaming output, auto-scroll, copy, and clear controls.
+  - **Execution History**: Searchable audit log of past runs with duration (ms), exit codes, and stdout/stderr inspectors.
+  - **ChatGPT Setup**: Displays your active HTTPS Tunnel URL, Security Bearer Token, and a 1-click copyable OpenAPI schema.
+  - **Settings & Preferences**: Set custom working directories, shell preference (`/bin/zsh`, `/bin/bash`), timeouts, and optional auto-approval for safe read-only commands.
 
-3. **Zero-Configuration Public HTTPS Tunnel (Cloudflare Quick Tunnel)**:
-   - Built-in manager for Cloudflare Quick Tunnels (`trycloudflare.com`).
-   - Automatically establishes an encrypted public HTTPS endpoint without requiring any account, domain registration, or router port forwarding.
+- 🌐 **Zero-Config Public HTTPS Tunnel (Cloudflare Quick Tunnel)**:
+  - Built-in manager for ephemeral Cloudflare Quick Tunnels (`*.trycloudflare.com`).
+  - Automatically provisions an encrypted public HTTPS endpoint without requiring an account, domain purchase, or router port forwarding.
 
-4. **Dual Protocol Support**:
-   - **OpenAPI 3.1 REST API** (`/api/execute`): Direct plug-and-play integration with ChatGPT Custom GPT Actions.
-   - **Model Context Protocol (MCP)** (`/mcp` and `/sse`): Native support for ChatGPT and AI MCP connectors.
+- 🔌 **Dual Protocol Support**:
+  - **OpenAPI 3.1 REST API** (`/api/execute`): Direct plug-and-play integration with ChatGPT Custom GPT Actions.
+  - **Model Context Protocol (MCP)** (`/mcp` and `/sse`): Native support for ChatGPT and AI MCP connectors.
 
 ---
 
-## 🚀 Quick Start
+## 📋 Prerequisites
 
-### 1. Launch the Native App
+- **macOS Sonoma (14.0)** or later (Apple Silicon recommended).
+- **Swift 6.0+** / Xcode Command Line Tools (`xcode-select --install`).
+- A **ChatGPT** account (ChatGPT Plus, Team, or Enterprise recommended for Custom GPT Actions or MCP connectors).
+
+---
+
+## ⚡ Quick Start
+
+### 1. Clone & Build the Application
+
 ```bash
-open /Volumes/es/remoteTerminal/RemoteCommander.app
+# Clone the repository
+git clone https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander.git
+cd Mac-ChatGPT-RemoteCommander
+
+# Build and package the native application
+./scripts/build.sh
 ```
-*(Or run `swift run` from the project root).*
 
-### 2. Connect to ChatGPT in Your Web Browser (1 Minute)
+The build script compiles the release binary, auto-provisions the required tunnel helper, and packages everything into a standalone `RemoteCommander.app`.
 
-1. **Open RemoteCommander**:
-   - In the **ChatGPT Setup** tab, ensure the tunnel is active and note your **Public HTTPS Endpoint** (e.g. `https://xxxx.trycloudflare.com`) and **Security Bearer Token**.
-2. **Open ChatGPT**:
-   - Go to [chatgpt.com](https://chatgpt.com) in your browser.
-   - Click **Explore GPTs** -> **+ Create** (top right).
-3. **Add Action**:
-   - Go to the **Configure** tab, scroll down, and click **Create new action**.
-   - Under **Authentication**:
-     - Authentication Type: `API Key`
-     - Auth Type: `Bearer`
-     - API Key: Paste your **Security Bearer Token** from RemoteCommander.
-   - Under **Schema**:
-     - In RemoteCommander, click **Copy OpenAPI 3.1 Schema**.
-     - Paste it into the Schema box in ChatGPT.
-4. **Test it!**:
-   - In your ChatGPT preview or saved GPT, ask:
-     > *"Check my macOS version and list files in my workspace."*
-   - ChatGPT will call `executeCommand`.
-   - An approval prompt will appear in **RemoteCommander** on your Mac.
-   - Click **[ Approve & Run ]** and watch the output stream live to ChatGPT!
+### 2. Launch RemoteCommander
+
+```bash
+open RemoteCommander.app
+```
+
+*(You can also move `RemoteCommander.app` into your `/Applications` folder for everyday access).*
 
 ---
 
-## 🛠️ Project Structure
+## 🔗 Connecting to ChatGPT in Your Browser
 
-```
-remoteTerminal/
-├── RemoteCommander.app/             # Self-contained native macOS app bundle
-│   └── Contents/
-│       ├── MacOS/RemoteCommander    # Compiled native ARM64 Swift binary
-│       ├── Resources/cloudflared   # Bundled Cloudflare Quick Tunnel binary
-│       └── Info.plist              # Bundle metadata
-├── Sources/RemoteCommander/
-│   ├── RemoteCommanderApp.swift     # SwiftUI @main entry point & menu items
-│   ├── Models/
-│   │   ├── CommandRequest.swift     # Request model and lifecycle status
-│   │   ├── ExecutionRecord.swift    # Execution history and timing record
-│   │   ├── RiskAssessment.swift     # Command risk classifier & pattern detector
-│   │   ├── AppSettings.swift        # User preferences & API key manager
-│   │   └── UIState.swift            # View state coordinator
-│   ├── Services/
-│   │   ├── ProcessRunner.swift      # Async Process execution with stdout/stderr capture
-│   │   ├── HTTPServer.swift         # Zero-dependency Apple Network.framework HTTP & MCP server
-│   │   ├── TunnelManager.swift      # Cloudflare Quick Tunnel process manager
-│   │   └── CommandManager.swift     # Central approval queue and execution controller
-│   └── Views/
-│       ├── ContentView.swift        # Main NavigationSplitView and banner alerts
-│       ├── ApprovalsView.swift      # Pending approval card with risk badge
-│       ├── TerminalView.swift       # Monospace dark terminal console viewer
-│       ├── HistoryView.swift        # Searchable execution history & detail inspector
-│       ├── TunnelSetupView.swift    # Live tunnel status, token, and ChatGPT guide
-│       └── SettingsView.swift       # Preferences & directory picker
-├── bin/
-│   └── cloudflared                  # Standalone Cloudflare Tunnel binary
-├── scripts/
-│   └── build.sh                     # Automated build and bundle packaging script
-└── Package.swift                    # Swift Package Manager manifest
-```
+Connecting RemoteCommander to your web ChatGPT session takes less than one minute:
+
+### Step 1: Retrieve Your Live Endpoint & Token
+1. Open **RemoteCommander**.
+2. Click the **ChatGPT Setup** tab in the sidebar.
+3. If the tunnel is stopped, click **Start Cloudflare Tunnel**.
+4. Copy your **Public HTTPS Endpoint** (e.g. `https://random-subdomain.trycloudflare.com`) and your **Security Bearer Token**.
+
+### Step 2: Create a Custom GPT Action
+1. Open [chatgpt.com](https://chatgpt.com) in your web browser.
+2. Go to **Explore GPTs** -> click **+ Create** (top right) -> select the **Configure** tab.
+3. Scroll down and click **Create new action**.
+4. Configure **Authentication**:
+   - **Authentication Type**: `API Key`
+   - **Auth Type**: `Bearer`
+   - **API Key**: Paste your **Security Bearer Token** from RemoteCommander.
+5. Configure **Schema**:
+   - In RemoteCommander, click **Copy OpenAPI 3.1 Schema**.
+   - Paste it into the Schema box in ChatGPT.
+6. Save your Custom GPT.
+
+### Step 3: Test Execution
+In your ChatGPT conversation, simply say:
+> *"Check my macOS version and list the files in my current directory."*
+
+ChatGPT will invoke `executeCommand`. An approval prompt will immediately pop up in **RemoteCommander** on your Mac. Click **[ Approve & Run ]** and the output will stream directly back to your ChatGPT chat!
 
 ---
 
 ## 🔒 Security Architecture
 
-- **Token Authentication**: All requests to `/api/execute` and `/mcp` require an `Authorization: Bearer <token>` header matching the app's secret token.
-- **Local Isolation**: Commands execute under your standard macOS user permissions without root privileges.
-- **Approval Gate**: Commands are held in an asynchronous suspension until explicitly approved via the native UI.
-- **Audit Logging**: Every command, exit code, timestamp, and duration is logged locally in the app's history.
+| Security Layer | Description |
+| :--- | :--- |
+| **Human-in-the-Loop** | Every command halts execution asynchronously until explicitly approved in the native Mac UI. |
+| **Bearer Token Auth** | All incoming HTTP and MCP requests require an `Authorization: Bearer <token>` header matching the app's secret token. |
+| **Risk Detection** | Commands are automatically analyzed against pattern signatures for destructive flags (`rm -rf`, `sudo`, `dd`). |
+| **Unprivileged Execution** | Commands execute strictly within standard user privileges—never as `root`. |
+| **Audit Trail** | Full audit log recording timestamps, commands, working directories, execution duration, and exit codes. |
+
+---
+
+## 📂 Project Structure
+
+```
+Mac-ChatGPT-RemoteCommander/
+├── Package.swift                    # Swift Package Manager manifest
+├── README.md                        # Documentation & setup guide
+├── LICENSE                          # MIT License
+├── scripts/
+│   └── build.sh                     # Release build & app bundle assembler
+└── Sources/RemoteCommander/
+    ├── RemoteCommanderApp.swift     # SwiftUI @main entry point & menu items
+    ├── Models/
+    │   ├── CommandRequest.swift     # Request data model & lifecycle states
+    │   ├── ExecutionRecord.swift    # Execution history and timing record
+    │   ├── RiskAssessment.swift     # Command risk analyzer (Safe / Moderate / High Risk)
+    │   ├── AppSettings.swift        # User preferences & security token manager
+    │   └── UIState.swift            # View state coordinator
+    ├── Services/
+    │   ├── ProcessRunner.swift      # Async shell execution with stdout/stderr capture
+    │   ├── HTTPServer.swift         # Zero-dependency Apple Network.framework HTTP & MCP server
+    │   ├── TunnelManager.swift      # Cloudflare Quick Tunnel process manager
+    │   └── CommandManager.swift     # Approval queue and execution controller
+    └── Views/
+        ├── ContentView.swift        # Main NavigationSplitView and banner alerts
+        ├── ApprovalsView.swift      # Interactive approval card with risk badge
+        ├── TerminalView.swift       # Monospace dark terminal console viewer
+        ├── HistoryView.swift        # Searchable execution history & output drawer
+        ├── TunnelSetupView.swift    # Live tunnel status, token, & ChatGPT setup guide
+        └── SettingsView.swift       # Preferences & folder picker
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

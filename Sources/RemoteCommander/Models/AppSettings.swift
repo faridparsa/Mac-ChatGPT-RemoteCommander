@@ -32,8 +32,6 @@ public class AppSettings: ObservableObject {
         let initialDir: String
         if let savedDir = defaults.string(forKey: "rc_working_directory"), !savedDir.isEmpty {
             initialDir = savedDir
-        } else if FileManager.default.fileExists(atPath: "/Volumes/es/remoteTerminal") {
-            initialDir = "/Volumes/es/remoteTerminal"
         } else {
             initialDir = FileManager.default.homeDirectoryForCurrentUser.path
         }
