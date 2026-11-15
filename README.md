@@ -181,42 +181,6 @@ cd Mac-ChatGPT-RemoteCommander
 # 3. Launch the compiled app
 open RemoteCommander.app
 ```
-
----
-
-## 📂 Project Structure
-
-```
-Mac-ChatGPT-RemoteCommander/
-├── Package.swift                    # Swift Package Manager manifest
-├── README.md                        # Documentation, screenshots & setup guide
-├── LICENSE                          # MIT License
-├── docs/
-│   └── screenshots/                 # Application screenshots
-├── scripts/
-│   └── build.sh                     # Release build & app bundle assembler
-└── Sources/RemoteCommander/
-    ├── RemoteCommanderApp.swift     # SwiftUI @main entry point & menu items
-    ├── Models/
-    │   ├── CommandRequest.swift     # Request data model & lifecycle states
-    │   ├── ExecutionRecord.swift    # Execution history and timing record
-    │   ├── RiskAssessment.swift     # Command risk analyzer (Safe / Moderate / High Risk)
-    │   ├── AppSettings.swift        # User preferences & security token manager
-    │   └── UIState.swift            # View state coordinator
-    ├── Services/
-    │   ├── ProcessRunner.swift      # Async shell execution with stdout/stderr capture
-    │   ├── HTTPServer.swift         # Zero-dependency Apple Network.framework HTTP & MCP server
-    │   ├── TunnelManager.swift      # Cloudflare Quick Tunnel process manager
-    │   └── CommandManager.swift     # Approval queue and execution controller
-    └── Views/
-        ├── ContentView.swift        # Main NavigationSplitView and banner alerts
-        ├── ApprovalsView.swift      # Interactive approval card with risk badge
-        ├── TerminalView.swift       # Monospace dark terminal console viewer
-        ├── HistoryView.swift        # Searchable execution history & output drawer
-        ├── TunnelSetupView.swift    # Live tunnel status, token, & ChatGPT setup guide
-        └── SettingsView.swift       # Preferences & folder picker
-```
-
 ---
 
 ## 📄 License
