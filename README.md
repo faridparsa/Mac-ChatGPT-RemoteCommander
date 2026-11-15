@@ -8,6 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-macOS%2014.0%2B-black?style=flat&logo=apple)](https://www.apple.com/macos/)
 [![Language](https://img.shields.io/badge/Swift-6.0-orange?style=flat&logo=swift)](https://swift.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/faridparsa/Mac-ChatGPT-RemoteCommander?style=flat&color=green)](https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander/releases/latest)
 
 **RemoteCommander** is an Apple native macOS application (SwiftUI / AppKit) that enables **ChatGPT running in your web browser** to execute terminal commands on your Mac. It features a desktop interface with **human-in-the-loop interactive approval prompts**, real-time terminal streaming, an execution history audit log, and zero-configuration HTTPS tunneling.
 
@@ -44,13 +45,57 @@
 
 Pre-built standalone application for macOS 14+ (Apple Silicon):
 
-- **[⬇️ Download RemoteCommander.zip (Latest)](https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander/raw/main/RemoteCommander.zip)** *(Direct 1-click download, ~20 MB)*
-- You can also clone this repository directly; the pre-compiled **`RemoteCommander.app`** bundle is included right in the project root!
+- **[⬇️ Download RemoteCommander.zip (Latest Release)](https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander/releases/latest)** *(Standalone zip, ~20 MB)*
 
-> **Installation**:
-> 1. Download and unzip `RemoteCommander.zip` (or use the pre-built `RemoteCommander.app` in the cloned repo).
-> 2. Drag **RemoteCommander.app** into your `/Applications` folder.
-> 3. Double-click to launch!
+### Installation:
+1. Download **`RemoteCommander.zip`** from the [Releases tab](https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander/releases/latest).
+2. Unzip and drag **`RemoteCommander.app`** into your `/Applications` folder.
+3. Double-click to launch!
+
+> [!NOTE]
+> ### 🛡️ macOS Gatekeeper Note ("Unidentified Developer")
+> Because RemoteCommander is an independent open-source macOS app not distributed through the Mac App Store, macOS Gatekeeper may display a security prompt on first launch stating that the app *"cannot be opened because it is from an unidentified developer"*.
+> 
+> **To open the app:**
+> - **Method 1 (Finder)**: **Right-click (or Control-click)** on `RemoteCommander.app`, select **Open**, and then click **Open** in the confirmation dialog. (You only need to do this once).
+> - **Method 2 (Terminal)**: Remove the quarantine attribute by running:
+>   ```bash
+>   xattr -cr /Applications/RemoteCommander.app
+>   ```
+
+---
+
+## 🖼️ App Tour & Screenshots
+
+### 1. Interactive Command Approvals
+Pause and inspect every command requested by ChatGPT before it touches your system. Review the exact command, target working directory, and risk classification.
+<p align="center">
+  <img src="docs/screenshots/01-approvals.png" width="850" alt="Command Approvals Screen">
+</p>
+
+### 2. Live Terminal Console
+Monitor real-time streaming output (`stdout` / `stderr`) with dark monospace styling, active execution spinners, auto-scroll, and quick copy controls.
+<p align="center">
+  <img src="docs/screenshots/02-terminal.png" width="850" alt="Terminal Console Screen">
+</p>
+
+### 3. Execution History & Output Drawer
+Search and filter all past commands. Inspect execution duration (in milliseconds), exit codes, and full standard output / error streams.
+<p align="center">
+  <img src="docs/screenshots/03-history.png" width="850" alt="Execution History Screen">
+</p>
+
+### 4. Zero-Config ChatGPT & Tunnel Setup
+One-click Cloudflare Tunnel manager generating an ephemeral, encrypted public HTTPS address. Includes your security Bearer token and a 1-click copyable OpenAPI 3.1 schema.
+<p align="center">
+  <img src="docs/screenshots/04-chatgpt-setup.png" width="850" alt="ChatGPT and Tunnel Setup Screen">
+</p>
+
+### 5. Settings & Security Controls
+Customize your default execution directory (with macOS folder picker), shell choice (`/bin/zsh`, `/bin/bash`), timeouts, and optional auto-approval for safe read-only commands.
+<p align="center">
+  <img src="docs/screenshots/05-settings.png" width="850" alt="Settings Screen">
+</p>
 
 ---
 
@@ -65,11 +110,8 @@ Pre-built standalone application for macOS 14+ (Apple Silicon):
   - Choose **[ Approve & Run ]** or **[ Reject ]** with one click or keyboard shortcut.
 
 - 🖥️ **Native Windowed macOS Interface (SwiftUI)**:
-  - **Approvals Tab**: Live review queue with risk tags, working directory details, and approval actions.
-  - **Terminal Console**: Dark monospace terminal with real-time streaming output, auto-scroll, copy, and clear controls.
-  - **Execution History**: Searchable audit log of past runs with duration (ms), exit codes, and stdout/stderr inspectors.
-  - **ChatGPT Setup**: Displays your active HTTPS Tunnel URL, Security Bearer Token, and a 1-click copyable OpenAPI schema.
-  - **Settings & Preferences**: Set custom working directories, shell preference (`/bin/zsh`, `/bin/bash`), timeouts, and optional auto-approval for safe read-only commands.
+  - Built strictly in Swift 6 and SwiftUI with Apple HIG design principles.
+  - Full keyboard shortcuts (`Cmd+T` for tunnel, `Cmd+K` to clear terminal, `Enter` to approve, `Esc` to reject).
 
 - 🌐 **Zero-Config Public HTTPS Tunnel (Cloudflare Quick Tunnel)**:
   - Built-in manager for ephemeral Cloudflare Quick Tunnels (`*.trycloudflare.com`).
@@ -78,39 +120,6 @@ Pre-built standalone application for macOS 14+ (Apple Silicon):
 - 🔌 **Dual Protocol Support**:
   - **OpenAPI 3.1 REST API** (`/api/execute`): Direct plug-and-play integration with ChatGPT Custom GPT Actions.
   - **Model Context Protocol (MCP)** (`/mcp` and `/sse`): Native support for ChatGPT and AI MCP connectors.
-
----
-
-## 📋 Prerequisites
-
-- **macOS Sonoma (14.0)** or later (Apple Silicon recommended).
-- **Swift 6.0+** / Xcode Command Line Tools (`xcode-select --install`).
-- A **ChatGPT** account (ChatGPT Plus, Team, or Enterprise recommended for Custom GPT Actions or MCP connectors).
-
----
-
-## ⚡ Quick Start
-
-### 1. Clone & Build the Application
-
-```bash
-# Clone the repository
-git clone https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander.git
-cd Mac-ChatGPT-RemoteCommander
-
-# Build and package the native application
-./scripts/build.sh
-```
-
-The build script compiles the release binary, auto-provisions the required tunnel helper, and packages everything into a standalone `RemoteCommander.app`.
-
-### 2. Launch RemoteCommander
-
-```bash
-open RemoteCommander.app
-```
-
-*(You can also move `RemoteCommander.app` into your `/Applications` folder for everyday access).*
 
 ---
 
@@ -157,13 +166,33 @@ ChatGPT will invoke `executeCommand`. An approval prompt will immediately pop up
 
 ---
 
+## ⚡ Building From Source
+
+If you prefer building from source rather than downloading the pre-built binary:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/faridparsa/Mac-ChatGPT-RemoteCommander.git
+cd Mac-ChatGPT-RemoteCommander
+
+# 2. Compile and package the .app bundle
+./scripts/build.sh
+
+# 3. Launch the compiled app
+open RemoteCommander.app
+```
+
+---
+
 ## 📂 Project Structure
 
 ```
 Mac-ChatGPT-RemoteCommander/
 ├── Package.swift                    # Swift Package Manager manifest
-├── README.md                        # Documentation & setup guide
+├── README.md                        # Documentation, screenshots & setup guide
 ├── LICENSE                          # MIT License
+├── docs/
+│   └── screenshots/                 # Application screenshots
 ├── scripts/
 │   └── build.sh                     # Release build & app bundle assembler
 └── Sources/RemoteCommander/
